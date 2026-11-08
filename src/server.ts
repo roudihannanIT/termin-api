@@ -1,6 +1,7 @@
 import { createApp } from "./app";
+import { env } from "./config/env";
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = env.PORT;
 
 const app = createApp();
 
