@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import { prisma } from "../../lib/prisma";
+import jwt from "jsonwebtoken";
+import { env } from "../../config/env";
 
 export class EmailAlreadyExistsError extends Error {
   constructor() {
@@ -22,4 +24,33 @@ export async function registerUser(email: string, password: string) {
   });
 
   return user;
+}
+export class InvalidCredentialsError extends Error {
+  constructor() {
+    super("Invalid email or password");
+    this.name = "InvalidCredentialsError";
+  }
+}
+
+export async function loginUser(email: string, password: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  const DUMMY_HASH = bcrypt.hashSync("dummy-password", 12);
+
+  if (!user) {
+    await bcrypt.compare(password, DUMMY_HASH);
+    throw new InvalidCredentialsError();
+  }
+
+  const valid = await bcrypt.compare(password, user.passwordHash);
+  if (!valid) {
+    throw new InvalidCredentialsError();
+  }
+
+  const token = jwt.sign(
+    { sub: user.id, role: user.role },
+    env.JWT_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  return { token, user: { id: user.id, email: user.email, role: user.role } };
 }
