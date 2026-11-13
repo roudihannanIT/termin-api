@@ -4,7 +4,7 @@ import { ZodError } from "zod";
 import { adminRouter } from "./modules/admin/admin.routes";
 import { officesRouter } from "./modules/offices/offices.routes";
 import { slotsRouter } from "./modules/slots/slots.routes";
-import { bookingsRouter } from "./modules/bookings/bookngs.routes";
+import { bookingsRouter } from "./modules/bookings/bookings.routes";
 
 export function createApp() {
   const app = express();

@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "description": "Appointment booking API with high-reliability concurrency guarantees",
-  "private": "true",
+  "private": true,
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
