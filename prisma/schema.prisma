@@ -18,3 +18,36 @@ model User {
   role         Role     @default(USER)
   createdAt    DateTime @default(now())
 }
+
+model Office {
+  id        String    @id @default(uuid())
+  name      String
+  city      String
+  timezone  String    @default("Europe/Berlin")
+  createdAt DateTime  @default(now())
+  services  Service[]
+}
+
+model Service {
+  id              String   @id @default(uuid())
+  officeId        String
+  name            String
+  durationMinutes Int      @default(15)
+  createdAt       DateTime @default(now())
+  office          Office   @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  slots           Slot[]
+
+  @@unique([officeId, name])
+}
+
+model Slot {
+  id        String   @id @default(uuid())
+  serviceId String
+  startsAt  DateTime
+  endsAt    DateTime
+  createdAt DateTime @default(now())
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, startsAt])
+  @@index([serviceId, startsAt])
+}

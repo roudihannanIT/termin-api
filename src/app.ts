@@ -2,13 +2,15 @@ import express from "express";
 import { authRouter } from "./modules/auth/auth.routes";
 import { ZodError } from "zod";
 import { adminRouter } from "./modules/admin/admin.routes";
-
+import { officesRouter } from "./modules/offices/offices.routes";
 export function createApp() {
   const app = express();
 
   app.use(express.json());
   app.use("/auth", authRouter);
   app.use("/admin", adminRouter);
+  app.use("/offices", officesRouter);
+
   app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok" });
   });
