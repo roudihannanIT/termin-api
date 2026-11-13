@@ -16,6 +16,7 @@ describe("slots", () => {
   let adminToken: string;
 
   beforeEach(async () => {
+    await prisma.booking.deleteMany();
     await prisma.slot.deleteMany();
     await prisma.service.deleteMany();
     await prisma.office.deleteMany();
@@ -83,5 +84,24 @@ describe("slots", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.slots).toHaveLength(2);
+  });
+
+  it("hides slots that have a confirmed booking", async () => {
+    await request(app)
+      .post(`/services/${serviceId}/slots/generate`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ startsAt: "2026-12-01T08:00:00Z", count: 3, stepMinutes: 60 });
+
+    const slot = await prisma.slot.findFirstOrThrow({ where: { serviceId }, orderBy: { startsAt: "asc" } });
+    const user = await prisma.user.findFirstOrThrow({ where: { email: "user@test.com" } });
+    await prisma.booking.create({ data: { slotId: slot.id, userId: user.id } });
+
+    const res = await request(app).get(
+      `/services/${serviceId}/slots?from=2026-12-01T07:00:00Z&to=2026-12-01T10:00:00Z`
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.slots).toHaveLength(1);
+    expect(res.body.slots.map((s: { id: string }) => s.id)).not.toContain(slot.id);
   });
 });
