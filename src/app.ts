@@ -3,6 +3,8 @@ import { authRouter } from "./modules/auth/auth.routes";
 import { ZodError } from "zod";
 import { adminRouter } from "./modules/admin/admin.routes";
 import { officesRouter } from "./modules/offices/offices.routes";
+import { slotsRouter } from "./modules/slots/slots.routes";
+
 export function createApp() {
   const app = express();
 
@@ -10,6 +12,7 @@ export function createApp() {
   app.use("/auth", authRouter);
   app.use("/admin", adminRouter);
   app.use("/offices", officesRouter);
+  app.use(slotsRouter);
 
   app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok" });
