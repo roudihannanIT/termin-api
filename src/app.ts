@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 import { adminRouter } from "./modules/admin/admin.routes";
 import { officesRouter } from "./modules/offices/offices.routes";
 import { slotsRouter } from "./modules/slots/slots.routes";
+import { bookingsRouter } from "./modules/bookings/bookngs.routes";
 
 export function createApp() {
   const app = express();
@@ -13,6 +14,7 @@ export function createApp() {
   app.use("/admin", adminRouter);
   app.use("/offices", officesRouter);
   app.use(slotsRouter);
+  app.use("/bookings", bookingsRouter);
 
   app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok" });

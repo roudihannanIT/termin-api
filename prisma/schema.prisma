@@ -11,10 +11,16 @@ enum Role {
   ADMIN
 }
 
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
   passwordHash String
+  bookings     Booking[]
   role         Role     @default(USER)
   createdAt    DateTime @default(now())
 }
@@ -43,6 +49,7 @@ model Service {
 model Slot {
   id        String   @id @default(uuid())
   serviceId String
+  bookings  Booking[]
   startsAt  DateTime
   endsAt    DateTime
   createdAt DateTime @default(now())
@@ -50,4 +57,15 @@ model Slot {
 
   @@unique([serviceId, startsAt])
   @@index([serviceId, startsAt])
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  slotId      String
+  userId      String
+  status      BookingStatus @default(CONFIRMED)
+  createdAt   DateTime      @default(now())
+  cancelledAt DateTime?
+  slot        Slot          @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
