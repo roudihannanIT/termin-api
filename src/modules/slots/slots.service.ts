@@ -23,7 +23,11 @@ export async function generateSlots(
 
 export function listSlots(serviceId: string, from: Date, to: Date, limit: number) {
   return prisma.slot.findMany({
-    where: { serviceId, startsAt: { gte: from, lt: to } },
+    where: {
+      serviceId,
+      startsAt: { gte: from, lt: to },
+      bookings: { none: { status: "CONFIRMED" } },
+    },
     orderBy: { startsAt: "asc" },
     take: limit,
     select: { id: true, startsAt: true, endsAt: true },
