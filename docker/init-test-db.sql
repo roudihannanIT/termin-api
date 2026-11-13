@@ -1,0 +1,1 @@
+CREATE DATABASE termin_test;
